@@ -4,7 +4,7 @@ import urllib.parse
 import base64
 from typing import Optional, Dict, Any
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
-from fastapi.responses import Response, FileResponse, JSONResponse
+from fastapi.responses import Response, FileResponse, JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -61,12 +61,18 @@ if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
-@app.get("/", summary="Voice Assistant Web Interface")
+@app.get("/", response_class=HTMLResponse, summary="Voice Assistant Web Interface")
 def home():
-    index_file = os.path.join(STATIC_DIR, "index.html")
-    if os.path.exists(index_file):
-        return FileResponse(index_file, media_type="text/html")
-    return {"message": "Voice Assistant Backend is active. Static UI not found."}
+    possible_paths = [
+        os.path.join(STATIC_DIR, "index.html"),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "public", "index.html")),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "static", "index.html")),
+    ]
+    for p in possible_paths:
+        if os.path.exists(p):
+            with open(p, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read(), status_code=200)
+    return HTMLResponse("<h1>Voice Assistant Backend is active.</h1>", status_code=200)
 
 
 @app.get("/health", summary="Health check")
