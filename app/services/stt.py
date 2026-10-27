@@ -19,6 +19,8 @@ def get_groq_client():
     return Groq(api_key=key, timeout=15.0, max_retries=2)
 
 groq_client = get_groq_client()
+STT_PROVIDER = os.getenv("STT_PROVIDER", "groq").strip().lower()
+ELEVENLABS_API_KEY = get_clean_key("ELEVENLABS_API_KEY")
 
 
 def transcribe_audio_file(
