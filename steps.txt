@@ -1,0 +1,114 @@
+================================================================================
+🚀 STEP-BY-STEP GUIDE: GITHUB PUSH & VERCEL DEPLOYMENT
+================================================================================
+
+Yeh guide aapko voice bot project ko GitHub par push karke Vercel par live deploy
+karne ke poore steps detail me batati hai.
+
+--------------------------------------------------------------------------------
+📌 STEP 1: GIT REPOSITORY INITIALIZE AUR COMMIT KAREIN
+--------------------------------------------------------------------------------
+Apne Mac terminal me voice bot folder ke andar yeh commands chalayein:
+
+1. Terminal kholein aur check karein ki aap project folder me hain:
+   cd "/Users/apple/Downloads/voice bot"
+
+2. Git repository initialize karein (agar pehle se nahi hai):
+   git init
+
+3. Check karein ki .gitignore file me .env add hai ya nahi:
+   (Humne .gitignore me .env aur logs/ already daal diya hai taaki aapki private API keys GitHub par leak na hon).
+
+4. Files ko Git me stage karein:
+   git add .
+
+5. Pehla commit karein:
+   git commit -m "Initial commit: Production AI Voice Assistant with Groq and Edge-TTS"
+
+6. Default branch ka naam 'main' set karein:
+   git branch -M main
+
+
+--------------------------------------------------------------------------------
+📌 STEP 2: GITHUB PAR NEW REPOSITORY BANA KAR PUSH KAREIN
+--------------------------------------------------------------------------------
+1. Apne browser me https://github.com kholein aur login karein.
+2. Top right corner me '+' icon par click karein aur "New repository" chunein.
+3. Repository Details bharein:
+   - Repository name: voice-bot (ya jo bhi naam aap chahein)
+   - Visibility: "Public" ya "Private" (Private recommend kiya jata hai)
+   - "Add a README file", ".gitignore", "license" ko UNCHECKED (khali) rehne dein.
+4. "Create repository" button par click karein.
+5. GitHub aapko ek URL dega (Jaise: https://github.com/YOUR_USERNAME/voice-bot.git).
+6. Apne Mac terminal me yeh commands chalayein (apna GitHub URL paste karein):
+
+   git remote add origin https://github.com/YOUR_USERNAME/voice-bot.git
+   git push -u origin main
+
+Agar GitHub aapse credentials maange, toh apna GitHub Personal Access Token ya GitHub CLI login use karein.
+
+
+--------------------------------------------------------------------------------
+📌 STEP 3: VERCEL PAR ACCOUNT BANAYEIN AUR CONNECT KAREIN
+--------------------------------------------------------------------------------
+1. Apne browser me https://vercel.com kholein.
+2. "Sign Up" ya "Log In" karein (GitHub ke sath login karein: "Continue with GitHub").
+3. Vercel dashboard par right side me "Add New..." -> "Project" par click karein.
+4. "Import Git Repository" me aapko apna naya repository `voice-bot` dikhega.
+5. Uss repository ke bagal me "Import" button par click karein.
+
+
+--------------------------------------------------------------------------------
+📌 STEP 4: ENVIRONMENT VARIABLES (API KEYS) CONFIGURE KAREIN
+--------------------------------------------------------------------------------
+Deploy karne se pehle Vercel dashboard par "Environment Variables" section khol kar
+apni keys zaroor add karein:
+
+Key 1:
+- Name : GROQ_API_KEY
+- Value: (Aapki Groq API Key, e.g. gsk_...)
+
+Key 2:
+- Name : GROQ_LLM_MODEL
+- Value: qwen/qwen3.8-27b
+
+Key 3:
+- Name : GROQ_WHISPER_MODEL
+- Value: whisper-large-v3-turbo
+
+Key 4:
+- Name : STT_PROVIDER
+- Value: groq
+
+Key 5 (Optional - agar ElevenLabs use karna ho):
+- Name : ELEVENLABS_API_KEY
+- Value: (Aapki ElevenLabs API key)
+
+Key 6 (Optional):
+- Name : ELEVENLABS_VOICE_ID
+- Value: JBFqnCBsd6RMkjVDRZzb
+
+
+--------------------------------------------------------------------------------
+📌 STEP 5: DEPLOY PAR CLICK KAREIN
+--------------------------------------------------------------------------------
+1. Saari environment variables daalne ke baad "Deploy" button par click karein.
+2. Vercel 1-2 minute me Python runtime aur dependencies install karke website live kar dega!
+3. Deployment complete hote hi aapko congratulation screen aur aapki live domain URL milegi (Jaise: `https://voice-bot-xyz.vercel.app`).
+4. Uss URL par click karein, microphone permission allow karein aur bolna start karein!
+
+
+--------------------------------------------------------------------------------
+💡 IMPORTANT TECHNICAL NOTES:
+--------------------------------------------------------------------------------
+1. Vercel Serverless TTS:
+   - Mac par local server me native macOS 'Rishi/Lekha' voice chalti hai.
+   - Vercel (Linux) serverless par automatically free Microsoft Neural Voice (Edge-TTS) chalta hai jo internet ke zariye bilkul natural Indian Hindi/English bolta hai!
+2. Vercel Logs:
+   - Vercel serverless environment me root directory read-only hoti hai, isliye humne logger ko configure kar diya hai ki Vercel par logs automatically `/tmp/logs` me safe save hon bina kisi crash ke.
+3. Microphone Access (HTTPS):
+   - Vercel automatically free SSL (HTTPS) provide karta hai, isliye mobile aur laptop dono ke browser me microphone bina kisi issue ke turant work karega!
+
+================================================================================
+Done! Aapka voice bot globally live ho jayega!
+================================================================================

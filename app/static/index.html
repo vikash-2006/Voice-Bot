@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Assistant — Premium Aurora Dark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #050505;
+            --primary: #7C3AED;
+            --secondary: #4F46E5;
+            --accent: #00E5FF;
+            --accent-glow: rgba(0, 229, 255, 0.35);
+            --primary-glow: rgba(124, 58, 237, 0.45);
+            --secondary-glow: rgba(79, 70, 229, 0.35);
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --text-subtle: #64748B;
+            --glass-bg: rgba(18, 18, 28, 0.45);
+            --glass-bg-hover: rgba(26, 26, 40, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-focus: rgba(124, 58, 237, 0.5);
+            --card-radius: 24px;
+            --pill-radius: 9999px;
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            selection-background-color: var(--primary);
+        }
+
+        /* Ambient Aurora Glow Background */
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+            animation: floatAurora 18s ease-in-out infinite alternate;
+        }
+
+        .blob-1 {
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            top: -150px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            bottom: -200px;
+            right: -100px;
+            animation-duration: 22s;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.15;
+            animation-duration: 25s;
+            animation-delay: -10s;
+        }
+
+        @keyframes floatAurora {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, -40px) scale(1.1); }
+            100% { transform: translate(-40px, 60px) scale(0.95); }
+        }
+
+        /* Glassmorphism Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 2.2rem;
+            background: rgba(5, 5, 5, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 24px var(--primary-glow);
+            position: relative;
+        }
+
+        .brand-icon-box::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent);
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #FFFFFF 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .live-mode-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 6px 14px;
+            border-radius: var(--pill-radius);
+            font-size: 0.78rem;
+            font-weight: 600;
+            backdrop-filter: blur(12px);
+        }
+
+        /* Sleek Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.15);
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input:checked + .slider {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: var(--pill-radius);
+            font-size: 0.74rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .mcp-status-pill {
+            padding: 6px 12px;
+            border-radius: var(--pill-radius);
+            font-size: 0.74rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            box-shadow: 0 0 14px rgba(0, 229, 255, 0.2);
+            cursor: default;
+            transition: all 0.3s;
+        }
+
+        .mcp-status-pill:hover {
+            background: rgba(0, 229, 255, 0.2);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
+        }
+
+        .mcp-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulseGlow 1.6s infinite;
+        }
+
+        .tool-tags-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .tool-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 229, 255, 0.12);
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.70rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .dot-pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulseGlow 1.8s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.5; }
+        }
+
+        /* App Container Layout */
+        main {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            max-width: 1240px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 960px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--card-radius);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        /* Center Hero Stage */
+        .hero-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.4rem 1.4rem 1rem 1.4rem;
+            min-height: 400px;
+        }
+
+        /* ================================================= */
+        /* 🔮 ANIMATED GLOWING MARBLE / FLUID ORB (DRIBBLE) */
+        /* ================================================= */
+        .orb-stage-wrapper {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Multi-layer Aurora Aura */
+        /* Multi-layer Aurora Aura */
+        .orb-outer-aura {
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, var(--secondary) 40%, transparent 70%);
+            opacity: 0.35;
+            filter: blur(28px);
+            transition: filter 0.2s ease;
+            will-change: transform, opacity, filter;
+            pointer-events: none;
+        }
+
+        /* The 3D Swirling Orb */
+        .orb {
+            position: relative;
+            width: 145px;
+            height: 145px;
+            border-radius: 50%;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 
+                0 0 50px var(--primary-glow),
+                inset -20px -20px 40px rgba(10, 5, 30, 0.9),
+                inset 20px 20px 40px rgba(255, 255, 255, 0.3),
+                inset 0 0 30px var(--accent);
+            transition: box-shadow 0.25s ease;
+            will-change: transform, border-radius;
+        }
+
+        .orb:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 70px rgba(124, 58, 237, 0.7), inset 0 0 40px var(--accent);
+        }
+
+        /* Swirling Fluid Texture (CSS Gradient Mesh Simulation) */
+        .orb-fluid-texture {
+            position: absolute;
+            inset: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 30% 40%, #c084fc 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 60%, var(--primary) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, var(--secondary) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, #38bdf8 0%, transparent 50%),
+                linear-gradient(135deg, #7C3AED, #4F46E5, #00E5FF, #9333EA);
+            filter: blur(14px) contrast(1.5);
+            animation: swirlMotion 14s linear infinite;
+        }
+
+        @keyframes swirlMotion {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* Specular Liquid Highlights */
+        .orb-specular {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.15) 35%, transparent 65%);
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        /* STATE: BOT THINKING (Fast Vortex Shimmer) */
+        .hero-stage.thinking .orb-fluid-texture {
+            animation: swirlMotion 2.8s linear infinite;
+        }
+
+        /* Orb Status & Subtitle */
+        .hero-headline {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.2rem;
+        }
+
+        .hero-subtext {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            max-width: 480px;
+            line-height: 1.4;
+            margin-bottom: 0.7rem;
+        }
+
+        /* Live Status Pill with Ripple */
+        .state-indicator-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--pill-radius);
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.7rem;
+            backdrop-filter: blur(16px);
+            transition: all 0.3s;
+        }
+
+        /* Interactive Sound Wave Bar */
+        .audio-wave-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 16px;
+            margin-bottom: 0.7rem;
+        }
+
+        .wave-bar {
+            width: 4px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 3px;
+            opacity: 0.4;
+            transition: height 0.08s ease, opacity 0.08s ease;
+        }
+
+        /* Action Buttons Row */
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-circle-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            outline: none;
+        }
+
+        .icon-circle-btn:hover {
+            background: var(--glass-bg-hover);
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--accent);
+        }
+
+        .main-voice-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px var(--primary-glow);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            outline: none;
+        }
+
+        .main-voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.7);
+        }
+
+        .main-voice-btn.recording {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            box-shadow: 0 0 35px rgba(239, 68, 68, 0.8);
+            animation: pulseRecord 1.2s infinite alternate;
+        }
+
+        @keyframes pulseRecord {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        /* Barge-In Interrupt Pill Button */
+        .barge-in-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #FCA5A5;
+            padding: 7px 16px;
+            border-radius: var(--pill-radius);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            animation: pulseGlow 1.6s infinite;
+            margin-top: 0.6rem;
+            transition: all 0.2s;
+        }
+
+        .barge-in-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+            color: #FFFFFF;
+            transform: scale(1.05);
+        }
+
+        /* Quick Prompt Cards (as in Dribbble reference) */
+        .quick-prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 0.9rem;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .quick-prompts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .prompt-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(16px);
+            text-align: left;
+        }
+
+        .prompt-card:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-focus);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.25);
+        }
+
+        .prompt-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prompt-icon {
+            font-size: 1.15rem;
+        }
+
+        .prompt-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #F8FAFC;
+        }
+
+        .prompt-arrow {
+            color: var(--text-subtle);
+            font-size: 0.85rem;
+            transition: transform 0.2s;
+        }
+
+        .prompt-card:hover .prompt-arrow {
+            color: var(--accent);
+            transform: translateX(3px);
+        }
+
+        /* Real-time Telemetry Metrics Pill Bar */
+        .telemetry-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .telemetry-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.74rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        .telemetry-pill span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* 4-Step Pipeline Flow */
+        .pipeline-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin-bottom: 1.5rem;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .step-item {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-subtle);
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .step-item.active {
+            color: #FFFFFF;
+            background: rgba(124, 58, 237, 0.3);
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .step-item.completed {
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .step-divider {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.75rem;
+        }
+
+        /* Right Panel: Conversation Transcript & Logs */
+        .side-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .chat-card {
+            display: flex;
+            flex-direction: column;
+            height: 480px;
+            padding: 1.5rem;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+        }
+
+        .chat-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-feed {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 6px;
+        }
+
+        .chat-feed::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chat-feed::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            max-width: 88%;
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-bubble.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(79, 70, 229, 0.2));
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            border-bottom-right-radius: 4px;
+            color: #FFFFFF;
+        }
+
+        .msg-bubble.bot {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: 4px;
+            color: #E2E8F0;
+        }
+
+        .msg-bubble.interrupted {
+            opacity: 0.6;
+            border: 1px dashed rgba(239, 68, 68, 0.45);
+        }
+
+        .msg-sender {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .msg-bubble.user .msg-sender { color: #A78BFA; }
+        .msg-bubble.bot .msg-sender { color: var(--accent); }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.74rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost:hover {
+            color: #FFFFFF;
+            border-color: var(--primary);
+            background: rgba(124, 58, 237, 0.15);
+        }
+
+        /* Telemetry & Logs Drawer */
+        .logs-card {
+            padding: 1.25rem;
+        }
+
+        .stats-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #FFFFFF, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        .logs-scroll {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            background: #030305;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding-bottom: 6px;
+        }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { color: var(--accent); font-size: 0.68rem; }
+        .log-query { color: #F1F5F9; margin-top: 2px; }
+        .log-resp { color: #A5B4FC; }
+
+        /* Sensitivity slider */
+        .slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+        .slider-wrap input[type="range"] {
+            width: 70px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           INTERACTIVE MEDICAL VISUAL CARDS
+           ========================================== */
+        .visual-card {
+            margin-top: 10px;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 0.80rem;
+            line-height: 1.45;
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* 1. 📋 Medical Rx Prescription Card */
+        .medical-rx-card {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.3) 0%, rgba(15, 23, 42, 0.75) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.18);
+        }
+        .rx-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .rx-badge {
+            font-weight: 800;
+            color: #10B981;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .rx-verified {
+            font-size: 0.68rem;
+            color: #34D399;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 7px;
+            border-radius: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .rx-med-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .rx-med-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #FFFFFF;
+        }
+        .rx-brands {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .rx-brand-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #CBD5E1;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+        }
+        .rx-info-row {
+            margin-bottom: 6px;
+            color: #E2E8F0;
+            font-size: 0.78rem;
+        }
+        .rx-label {
+            color: #A7F3D0;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .rx-dosage-box {
+            background: rgba(0, 0, 0, 0.35);
+            border-left: 3px solid #10B981;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin: 6px 0;
+        }
+        .rx-pill-badge {
+            font-size: 0.70rem;
+            font-weight: 700;
+            color: #6EE7B7;
+            margin-bottom: 2px;
+        }
+        .rx-dosage-text {
+            color: #F1F5F9;
+            font-size: 0.78rem;
+        }
+        .rx-warning-box {
+            display: flex;
+            gap: 6px;
+            align-items: flex-start;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #FDE68A;
+            font-size: 0.74rem;
+            margin: 6px 0;
+        }
+        .rx-disclaimer {
+            font-size: 0.68rem;
+            color: #94A3B8;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* 2. 🚨 Emergency Action Card */
+        .emergency-action-card {
+            background: linear-gradient(135deg, rgba(153, 27, 27, 0.35) 0%, rgba(20, 10, 25, 0.8) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.22);
+        }
+        .er-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+        }
+        .er-pulse-beacon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #EF4444;
+            box-shadow: 0 0 10px #EF4444;
+            animation: pulseGlow 1.2s infinite;
+        }
+        .er-title {
+            font-weight: 800;
+            color: #FCA5A5;
+            font-size: 0.86rem;
+        }
+        .er-facility-box {
+            margin-bottom: 10px;
+        }
+        .er-facility-name {
+            font-weight: 700;
+            color: #FFFFFF;
+            font-size: 0.88rem;
+            margin-bottom: 3px;
+        }
+        .er-guidance {
+            color: #FECACA;
+            font-size: 0.75rem;
+        }
+        .er-actions-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .er-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .er-btn-ambulance {
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.35), rgba(220, 38, 38, 0.5));
+            border: 1px solid rgba(239, 68, 68, 0.7);
+            color: #FFFFFF;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+        }
+        .er-btn-ambulance:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
+            color: #FFFFFF;
+        }
+        .er-btn-national {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #F8FAFC;
+        }
+        .er-btn-national:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #FFFFFF;
+        }
+        .er-btn-maps {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.3), rgba(37, 99, 235, 0.35));
+            border: 1px solid rgba(56, 189, 248, 0.55);
+            color: #E0F2FE;
+        }
+        .er-btn-maps:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
+            color: #FFFFFF;
+        }
+        .er-btn-icon {
+            font-size: 1.15rem;
+        }
+        .er-btn-content {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .er-btn-sub {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .er-btn-main {
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        /* 3. 🩺 Triage Severity Meter Card */
+        .triage-severity-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.75) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        .triage-card-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            color: #E2E8F0;
+            font-size: 0.84rem;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .triage-meter {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .meter-segment {
+            flex: 1;
+            padding: 6px 4px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            opacity: 0.32;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+        .meter-segment.mild {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34D399;
+        }
+        .meter-segment.mild.active {
+            opacity: 1;
+            border-color: #10B981;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.3);
+            color: #FFFFFF;
+        }
+        .meter-segment.moderate {
+            background: rgba(245, 158, 11, 0.15);
+            color: #FBBF24;
+        }
+        .meter-segment.moderate.active {
+            opacity: 1;
+            border-color: #F59E0B;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+            background: rgba(245, 158, 11, 0.3);
+            color: #FFFFFF;
+        }
+        .meter-segment.emergency {
+            background: rgba(239, 68, 68, 0.15);
+            color: #F87171;
+        }
+        .meter-segment.emergency.active {
+            opacity: 1;
+            border-color: #EF4444;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.35);
+            color: #FFFFFF;
+        }
+        .triage-row {
+            margin-bottom: 6px;
+        }
+        .triage-label {
+            font-weight: 600;
+            color: #94A3B8;
+            font-size: 0.74rem;
+        }
+        .triage-chips {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 3px;
+        }
+        .triage-chip {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-size: 0.70rem;
+            color: #F1F5F9;
+        }
+        .triage-red-flags {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 7px 10px;
+            margin: 8px 0;
+            color: #FCA5A5;
+            font-size: 0.74rem;
+        }
+        .red-flags-list {
+            margin: 4px 0 0 16px;
+            padding: 0;
+        }
+        .triage-homecare {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: #CBD5E1;
+            line-height: 1.4;
+        }
+
+        /* 4. 🩹 First Aid Card */
+        .first-aid-card {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(15, 23, 42, 0.75) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+        .fa-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            color: #93C5FD;
+            font-size: 0.84rem;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .fa-steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .fa-step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.76rem;
+            color: #F1F5F9;
+        }
+        .fa-step-num {
+            background: rgba(59, 130, 246, 0.3);
+            border: 1px solid #3B82F6;
+            color: #FFFFFF;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.66rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .fa-er-callout {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.73rem;
+            color: #FCA5A5;
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* 5. 👨‍⚕️ Specialist Card */
+        .specialist-card {
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.3) 0%, rgba(15, 23, 42, 0.75) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+        .specialist-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            color: #D8B4FE;
+            font-size: 0.84rem;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        .spec-name {
+            font-size: 1.0rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin: 4px 0 2px 0;
+        }
+        .spec-focus {
+            font-size: 0.75rem;
+            color: #D8B4FE;
+            margin-bottom: 8px;
+        }
+        .spec-maps-link {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.45);
+            color: #E9D5FF;
+            padding: 5px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .spec-maps-link:hover {
+            background: rgba(168, 85, 247, 0.4);
+            color: #FFFFFF;
+        }
+
+        /* 6. 🌐 Web Search Card */
+        .web-search-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.6) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.35);
+        }
+        .ws-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+        }
+        .ws-title {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.80rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ws-badge {
+            font-size: 0.66rem;
+            background: rgba(0, 229, 255, 0.15);
+            color: var(--accent);
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+        .ws-query {
+            font-size: 0.70rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+        .ws-item {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            border-left: 2px solid var(--accent);
+        }
+        .ws-item-title {
+            font-weight: 700;
+            color: #F1F5F9;
+            font-size: 0.75rem;
+            margin-bottom: 2px;
+        }
+        .ws-item-snippet {
+            font-size: 0.72rem;
+            color: #94A3B8;
+            line-height: 1.35;
+        }
+        .ws-item-link {
+            display: inline-block;
+            font-size: 0.68rem;
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 3px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Aurora Background Glowing Blobs -->
+    <div class="aurora-bg">
+        <div class="aurora-blob blob-1"></div>
+        <div class="aurora-blob blob-2"></div>
+        <div class="aurora-blob blob-3"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header>
+        <div class="brand-cluster">
+            <div class="brand-icon-box">
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="brand-title">AI Voice Assistant</h1>
+                <p class="brand-subtitle">Groq Whisper + Groq 27B + ElevenLabs + Medical MCP</p>
+            </div>
+        </div>
+
+        <div class="header-controls">
+            <!-- 6 MCP Tools Status Badge -->
+            <div class="mcp-status-pill" title="6 MCP Medical & Search Tools Active: Disease/Symptoms, Medicines, Hospitals, Clinics, First-Aid, Live Search">
+                <span class="mcp-dot"></span>
+                <span>🩺 6 MCP Tools Active</span>
+            </div>
+
+            <!-- Hands-Free VAD Toggle -->
+            <div class="live-mode-badge" title="Continuous full-duplex voice with automated speech detection">
+                <label class="switch">
+                    <input type="checkbox" id="live-mode-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Hands-Free Live Voice</span>
+            </div>
+
+            <!-- VAD Sensitivity Slider -->
+            <div class="slider-wrap" title="Adjust Voice Activity Threshold">
+                <span>VAD:</span>
+                <input type="range" id="vad-threshold-slider" min="5" max="50" value="16">
+                <span id="threshold-val">0.016</span>
+            </div>
+
+            <!-- System Ready Status -->
+            <div class="status-pill">
+                <span class="dot-pulse"></span>
+                <span id="service-status">Engine Ready</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Center Voice Hero Stage -->
+        <section class="glass-card hero-stage" id="hero-stage">
+            
+            <!-- 4-Step Pipeline Flow Indicator -->
+            <div class="pipeline-bar">
+                <div id="step-1" class="step-item">1. 🎙️ Voice Sunna</div>
+                <span class="step-divider">➔</span>
+                <div id="step-2" class="step-item">2. 📝 Text Convert</div>
+                <span class="step-divider">➔</span>
+                <div id="step-3" class="step-item">3. 🧠 Response Generate</div>
+                <span class="step-divider">➔</span>
+                <div id="step-4" class="step-item">4. 🔊 Voice Synthesize</div>
+            </div>
+
+            <!-- 🔮 THE GLOWING MARBLE FLUID ORB -->
+            <div class="orb-stage-wrapper">
+                <div class="orb-outer-aura" id="orb-aura"></div>
+                <div class="orb" id="orb-btn" title="Click orb or button to talk or interrupt">
+                    <div class="orb-fluid-texture"></div>
+                    <div class="orb-specular"></div>
+                </div>
+            </div>
+
+            <h2 class="hero-headline" id="hero-headline">AI Medical Voice Assistant</h2>
+            <p class="hero-subtext" id="hero-subtext">
+                Ask anything about symptoms, medicines, hospitals, or first aid. Non-medical queries will be declined.
+            </p>
+
+            <!-- Quick Suggestions (Medical & Healthcare Prompts - Always Visible) -->
+            <div class="quick-prompts-grid">
+                <div class="prompt-card" onclick="sendQuickPrompt('Mujhe 2 din se tez bukhar aur sardi hai, kya ho sakta hai?')">
+                    <div class="prompt-info">
+                        <span class="prompt-icon">🩺</span>
+                        <span class="prompt-title">Check Symptoms</span>
+                    </div>
+                    <span class="prompt-arrow">➔</span>
+                </div>
+                <div class="prompt-card" onclick="sendQuickPrompt('Paracetamol kab aur kitni dose leni chahiye?')">
+                    <div class="prompt-info">
+                        <span class="prompt-icon">💊</span>
+                        <span class="prompt-title">Medicine Guide</span>
+                    </div>
+                    <span class="prompt-arrow">➔</span>
+                </div>
+                <div class="prompt-card" onclick="sendQuickPrompt('Burns ya aag se jalne par turant kya first aid karein?')">
+                    <div class="prompt-info">
+                        <span class="prompt-icon">🩹</span>
+                        <span class="prompt-title">First Aid Help</span>
+                    </div>
+                    <span class="prompt-arrow">➔</span>
+                </div>
+                <div class="prompt-card" onclick="sendQuickPrompt('WHO ki latest Mpox guidelines live search karke batao.')">
+                    <div class="prompt-info">
+                        <span class="prompt-icon">🌐</span>
+                        <span class="prompt-title">Live Web Search</span>
+                    </div>
+                    <span class="prompt-arrow">➔</span>
+                </div>
+            </div>
+
+            <!-- Status Indicator Pill -->
+            <div class="state-indicator-pill" id="state-pill">
+                <span class="dot-pulse" style="background: var(--accent);"></span>
+                <span id="state-pill-text">Listening... Click Mic or Just Speak</span>
+            </div>
+
+            <!-- Soundwave Audio Visualizer -->
+            <div class="audio-wave-visualizer" id="wave-visualizer">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+
+            <!-- Main Interactive Controls Row -->
+            <div class="hero-actions">
+                <button class="icon-circle-btn" onclick="startNewChat()" title="Start New Conversation">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+
+                <button class="main-voice-btn" id="mic-btn" title="Click to speak or interrupt">
+                    <svg id="mic-icon" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z" />
+                    </svg>
+                </button>
+
+                <button class="icon-circle-btn" onclick="interruptBot('button_click')" title="Stop/Interrupt Bot Voice">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Instant Barge-In Interrupt Button (Visible while AI is answering) -->
+            <button id="barge-in-btn" class="barge-in-btn" onclick="interruptBot('manual_pill')">
+                <span>⏹️</span> Bolna Roko (Instant Barge-In)
+            </button>
+
+            <!-- Telemetry Metrics Bar -->
+            <div class="telemetry-row">
+                <div class="telemetry-pill">STT: <span id="metric-stt">0 ms</span></div>
+                <div class="telemetry-pill">TTFT: <span id="metric-ttft">0 ms</span></div>
+                <div class="telemetry-pill">LLM: <span id="metric-llm">0 ms</span></div>
+                <div class="telemetry-pill">TTS: <span id="metric-tts">0 ms</span></div>
+                <div class="telemetry-pill">Total: <span id="metric-total">0 ms</span></div>
+                <div class="telemetry-pill">Tokens: <span id="metric-tokens" style="color: #FBBF24; font-weight: 700;">0</span></div>
+                <div class="telemetry-pill">Chunks: <span id="metric-chunks">1</span></div>
+            </div>
+        </section>
+
+        <!-- Right Side Stack: Live Conversation & Telemetry Logs -->
+        <aside class="side-stack">
+            
+            <!-- Conversation Card -->
+            <div class="glass-card chat-card">
+                <div class="chat-header">
+                    <div class="chat-title-group">
+                        <h3 style="font-size: 1.05rem; font-weight: 700;">Live Transcript</h3>
+                        <span id="session-badge" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 6px; background: rgba(124, 58, 237, 0.2); color: #C4B5FD; font-family: monospace;">chat-session</span>
+                    </div>
+                    <button class="btn-ghost" onclick="startNewChat()">+ New</button>
+                </div>
+
+                <div class="chat-feed" id="chat-feed">
+                    <div class="msg-bubble bot">
+                        <div class="msg-sender">Voice Assistant</div>
+                        Namaste! Main aapki voice sun sakta hu aur natural voice me reply karunga. Agar main bol raha hu aur aap beech me bolenge, toh main turant bolna rok kar aapki nayi baat sununga!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telemetry & Interaction Logs -->
+            <div class="glass-card logs-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.75rem;">
+                    <h4 style="font-size: 0.9rem; font-weight: 700; color: #FFFFFF;">Telemetry & Performance</h4>
+                    <button class="btn-ghost" onclick="fetchLogs()">Refresh</button>
+                </div>
+
+                <div class="stats-2col">
+                    <div class="stat-box">
+                        <div class="stat-number" id="stat-total">0</div>
+                        <div class="stat-label">Queries</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="stat-avg-lat">0ms</div>
+                        <div class="stat-label">Avg Latency</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="stat-success">100%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="stat-tts-avg">0ms</div>
+                        <div class="stat-label">Avg TTS</div>
+                    </div>
+                </div>
+
+                <div class="logs-scroll" id="logs-scroll">
+                    <div style="color: var(--text-subtle); text-align: center; padding: 0.8rem;">Logs will populate as you speak...</div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        function generateSessionId() {
+            return "chat-" + new Date().toISOString().slice(0,10).replace(/-/g,"") + "-" + Math.random().toString(36).substring(2, 7);
+        }
+
+        let sessionId = generateSessionId();
+        document.addEventListener("DOMContentLoaded", () => {
+            const badge = document.getElementById("session-badge");
+            if (badge) badge.innerText = sessionId;
+        });
+
+        // DOM Elements
+        const heroStage = document.getElementById("hero-stage");
+        const orbBtn = document.getElementById("orb-btn");
+        const orbAura = document.getElementById("orb-aura");
+        const micBtn = document.getElementById("mic-btn");
+        const statePill = document.getElementById("state-pill");
+        const statePillText = document.getElementById("state-pill-text");
+        const bargeInBtn = document.getElementById("barge-in-btn");
+        const chatFeed = document.getElementById("chat-feed");
+        const logsScroll = document.getElementById("logs-scroll");
+        const waveBars = document.querySelectorAll(".wave-bar");
+
+        let botFreqBuffer = new Uint8Array(64);
+
+        const liveModeToggle = document.getElementById("live-mode-toggle");
+        const thresholdSlider = document.getElementById("vad-threshold-slider");
+        const thresholdVal = document.getElementById("threshold-val");
+
+        const step1 = document.getElementById("step-1");
+        const step2 = document.getElementById("step-2");
+        const step3 = document.getElementById("step-3");
+        const step4 = document.getElementById("step-4");
+
+        const audioPlayer = new Audio();
+        let activeAbortController = null;
+
+        // ==========================================
+        // 🎙️ REAL-TIME VOICE STATE MACHINE (Req 1-14)
+        // ==========================================
+        const BOT_STATE = {
+            STANDBY: "STANDBY",         // Passively listening on mic via Web Audio Analyser
+            RECORDING: "RECORDING",     // Actively recording user speech via MediaRecorder
+            PROCESSING: "PROCESSING",   // Transcribing & Generating response
+            SPEAKING: "SPEAKING"        // Bot playing TTS voice, ready for barge-in
+        };
+        let currentBotState = BOT_STATE.STANDBY;
+
+        // VAD & Web Audio Engine State
+        let audioContext = null;
+        let analyser = null;
+        let microphoneStream = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let vadAnimationId = null;
+
+        let vadThreshold = 0.016;
+        let ambientNoiseFloor = 0.008;
+        let smoothedRms = 0.0;
+        let consecutiveSpeechFrames = 0;
+        let consecutiveSilenceFrames = 0;
+        let consecutiveBargeInFrames = 0;
+        let silenceStartTime = null;
+        let speechStartTime = null;
+        const SILENCE_TIMEOUT_MS = 600; // Strict 500-800ms requirement (600ms = optimal natural pause)
+        const MIN_SPEECH_DURATION_MS = 250;
+        const MAX_RECORDING_MS = 10000; // 10s safety max recording
+
+        // Compatibility state getters
+        function getIsRecording() { return currentBotState === BOT_STATE.RECORDING; }
+        function getIsBotSpeaking() { return currentBotState === BOT_STATE.SPEAKING; }
+        function getIsBotThinking() { return currentBotState === BOT_STATE.PROCESSING; }
+
+        thresholdSlider.addEventListener("input", (e) => {
+            const val = parseFloat(e.target.value);
+            vadThreshold = val / 1000;
+            thresholdVal.innerText = vadThreshold.toFixed(3);
+        });
+
+        function setPipelineStep(step) {
+            [step1, step2, step3, step4].forEach(s => s.classList.remove("active", "completed"));
+            if (step === 1) step1.classList.add("active");
+            else if (step === 2) { step1.classList.add("completed"); step2.classList.add("active"); }
+            else if (step === 3) { step1.classList.add("completed"); step2.classList.add("completed"); step3.classList.add("active"); }
+            else if (step === 4) { step1.classList.add("completed"); step2.classList.add("completed"); step3.classList.add("completed"); step4.classList.add("active"); }
+            else if (step === 'done') {
+                step1.classList.add("completed"); step2.classList.add("completed"); step3.classList.add("completed"); step4.classList.add("completed");
+            }
+        }
+
+        function setBotState(newState, detailText = "") {
+            currentBotState = newState;
+            console.log(`[BotState] -> ${newState} ${detailText ? '(' + detailText + ')' : ''}`);
+
+            if (newState === BOT_STATE.STANDBY) {
+                heroStage.classList.remove("listening", "thinking", "speaking");
+                micBtn.classList.remove("recording");
+                bargeInBtn.style.display = "none";
+                silenceStartTime = null;
+                consecutiveSpeechFrames = 0;
+                consecutiveSilenceFrames = 0;
+                consecutiveBargeInFrames = 0;
+                if (liveModeToggle && liveModeToggle.checked) {
+                    statePillText.innerText = "🎙️ Listening... (Aap boliye, main sun raha hu)";
+                } else {
+                    statePillText.innerText = "Ready. Click Orb ya boliye.";
+                }
+            } else if (newState === BOT_STATE.RECORDING) {
+                heroStage.classList.remove("thinking", "speaking");
+                heroStage.classList.add("listening");
+                micBtn.classList.add("recording");
+                bargeInBtn.style.display = "none";
+                statePillText.innerText = "🎙️ Sun raha hu... (Aap bol rahe hain)";
+                setPipelineStep(1);
+            } else if (newState === BOT_STATE.PROCESSING) {
+                heroStage.classList.remove("listening", "speaking");
+                heroStage.classList.add("thinking");
+                micBtn.classList.remove("recording");
+                bargeInBtn.style.display = "inline-flex";
+                statePillText.innerText = "⚡ Voice process ho rahi hai...";
+                setPipelineStep(2);
+            } else if (newState === BOT_STATE.SPEAKING) {
+                heroStage.classList.remove("listening", "thinking");
+                heroStage.classList.add("speaking");
+                micBtn.classList.remove("recording");
+                bargeInBtn.style.display = "inline-flex";
+                statePillText.innerText = "🔊 Jawaab bol raha hu... (Interrupt karne ke liye bole)";
+                setPipelineStep(4);
+            }
+        }
+
+        // ==========================================
+        // ⚡ INSTANT BARGE-IN INTERRUPTION (Req 10)
+        // ==========================================
+        function interruptBot(source = "vad") {
+            const wasActive = currentBotState === BOT_STATE.SPEAKING || currentBotState === BOT_STATE.PROCESSING;
+            if (!wasActive && audioPlayer.paused) return;
+
+            console.log(`[Barge-In] Interrupting bot from source: ${source}`);
+
+            // 1. Immediately silence and clear audio playback
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+                audioPlayer.removeAttribute('src');
+            }
+
+            // 2. Abort any in-flight backend request
+            if (activeAbortController) {
+                activeAbortController.abort();
+                activeAbortController = null;
+            }
+
+            // 3. Mark last message bubble as interrupted in UI
+            const lastBotBubble = chatFeed.querySelector(".msg-bubble.bot:last-child");
+            if (lastBotBubble && wasActive) {
+                lastBotBubble.classList.add("interrupted");
+            }
+
+            // 4. Notify backend to prune the interrupted turn from history
+            fetch("/api/interrupt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ session_id: sessionId })
+            }).catch(e => console.warn("Interrupt notify failed:", e));
+
+            // 5. Reset to STANDBY state
+            setBotState(BOT_STATE.STANDBY, "interrupted");
+        }
+
+        // ==========================================
+        // 🔮 DUAL-CHANNEL REAL-TIME WEB AUDIO ENGINE
+        // ==========================================
+        let micFreqBuffer = null;
+        let micTimeData = null;
+
+        // Visual state interpolation variables
+        let currentScale = 1.0;
+        let currentMorph = 0.0;
+        let auraScale = 1.0;
+        let auraOpacity = 0.35;
+
+        async function ensureAudioStream() {
+            if (microphoneStream && audioContext && analyser) return true;
+
+            try {
+                microphoneStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                    }
+                });
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === "suspended") {
+                    audioContext.resume().catch(() => {});
+                }
+
+                const source = audioContext.createMediaStreamSource(microphoneStream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.2;
+                source.connect(analyser);
+
+                micFreqBuffer = new Uint8Array(analyser.frequencyBinCount);
+                micTimeData = new Float32Array(analyser.fftSize);
+
+                startReactiveOrbLoop();
+                return true;
+            } catch (err) {
+                console.error("Microphone access error:", err);
+                statePillText.innerText = "Mic access blocked. Please allow mic in browser.";
+                return false;
+            }
+        }
+
+        function startReactiveOrbLoop() {
+            if (vadAnimationId) cancelAnimationFrame(vadAnimationId);
+
+            function updateLoop() {
+                try {
+                    const now = performance.now();
+                    let isUserAudioActive = false;
+                    let isBotAudioActive = false;
+                    let userVoiceEnergy = 0;
+                    let botBass = 0, botMids = 0, botTreble = 0, botVoiceEnergy = 0;
+
+                    const isBotSpeaking = currentBotState === BOT_STATE.SPEAKING;
+                    const isBotThinking = currentBotState === BOT_STATE.PROCESSING;
+                    const isRecording = currentBotState === BOT_STATE.RECORDING;
+
+                    // ------------------------------------------
+                    // 1. DYNAMIC RHYTHMIC CADENCE FOR BOT SPEECH
+                    // ------------------------------------------
+                    if (isBotSpeaking && !audioPlayer.paused) {
+                        const speechTime = now * 0.0075; // ~4.5 Hz natural speech syllable cadence
+                        const syllableBeat = Math.sin(speechTime) * 0.5 + 0.5;
+                        const vowelEmphasis = Math.sin(speechTime * 2.2 + 1.2) * 0.4 + 0.5;
+                        const consonantFlicker = Math.sin(speechTime * 5.5) * 0.2 + 0.3;
+
+                        botBass = Math.max(0.18, syllableBeat * 0.85);
+                        botMids = Math.max(0.22, vowelEmphasis * 0.9);
+                        botTreble = Math.max(0.12, consonantFlicker * 0.6);
+                        botVoiceEnergy = botBass * 0.45 + botMids * 0.4 + botTreble * 0.15;
+                        isBotAudioActive = true;
+
+                        if (!botFreqBuffer) botFreqBuffer = new Uint8Array(64);
+                        for (let i = 0; i < botFreqBuffer.length; i++) {
+                            const h = (i < 8 ? botBass : (i < 24 ? botMids : botTreble)) * 255;
+                            botFreqBuffer[i] = Math.round(h * (0.8 + 0.2 * Math.sin(now * 0.01 + i)));
+                        }
+                    }
+
+                    // ------------------------------------------
+                    // 2. ANALYZE USER MIC AUDIO & VAD STATE ENGINE
+                    // ------------------------------------------
+                    let micRms = 0;
+                    if (analyser && micTimeData) {
+                        analyser.getFloatTimeDomainData(micTimeData);
+
+                        let sum = 0;
+                        for (let i = 0; i < micTimeData.length; i++) {
+                            sum += micTimeData[i] * micTimeData[i];
+                        }
+                        micRms = Math.sqrt(sum / micTimeData.length);
+
+                        if (isRecording || micRms > vadThreshold) {
+                            if (!micFreqBuffer) micFreqBuffer = new Uint8Array(analyser.frequencyBinCount);
+                            analyser.getByteFrequencyData(micFreqBuffer);
+
+                            let bSum = 0; for (let i = 1; i <= 6; i++) bSum += micFreqBuffer[i] || 0;
+                            let mSum = 0; for (let i = 7; i <= 24; i++) mSum += micFreqBuffer[i] || 0;
+                            let tSum = 0; for (let i = 25; i <= 50; i++) tSum += micFreqBuffer[i] || 0;
+
+                            const micBass = bSum / (6 * 255);
+                            const micMids = mSum / (18 * 255);
+                            const micTreble = tSum / (26 * 255);
+
+                            userVoiceEnergy = Math.max(
+                                Math.min(1.0, micRms / 0.10),
+                                micBass * 0.45 + micMids * 0.4 + micTreble * 0.15
+                            );
+                            isUserAudioActive = true;
+                        }
+
+                        // Smooth RMS envelope to avoid zero-crossing dips
+                        smoothedRms = smoothedRms * 0.65 + micRms * 0.35;
+
+                        // Dynamic Hysteresis:
+                        // Speech onset requires clear voice above noise floor
+                        const speechThreshold = Math.max(vadThreshold, ambientNoiseFloor + 0.008);
+                        // Sustained speech threshold is slightly lower so normal speech trail-offs aren't cut
+                        const silenceThreshold = Math.max(vadThreshold * 0.85, ambientNoiseFloor + 0.003);
+
+                        // STATE 1: STANDBY (Mic listening passively, waiting for user speech)
+                        if (currentBotState === BOT_STATE.STANDBY) {
+                            ambientNoiseFloor = ambientNoiseFloor * 0.98 + smoothedRms * 0.02;
+                            const isVoiceOnset = smoothedRms > speechThreshold;
+
+                            if (isVoiceOnset) {
+                                consecutiveSpeechFrames++;
+                                if (consecutiveSpeechFrames >= 2) { // ~32ms of sustained voice onset
+                                    consecutiveSpeechFrames = 0;
+                                    if (!liveModeToggle || liveModeToggle.checked) {
+                                        startSpeechRecording();
+                                    }
+                                }
+                            } else {
+                                consecutiveSpeechFrames = 0;
+                            }
+                        }
+
+                        // STATE 2: RECORDING (User is actively speaking, capture audio until silence)
+                        else if (currentBotState === BOT_STATE.RECORDING) {
+                            const nowMs = Date.now();
+                            const isSpeaking = smoothedRms > silenceThreshold;
+                            if (isSpeaking) {
+                                silenceStartTime = null;
+                                consecutiveSilenceFrames = 0;
+                            } else {
+                                consecutiveSilenceFrames++;
+                                if (!silenceStartTime) {
+                                    silenceStartTime = nowMs;
+                                } else if (nowMs - silenceStartTime >= SILENCE_TIMEOUT_MS) {
+                                    // 500-800ms silence detected (600ms) -> Stop listening immediately! (Req 2, 3, 4)
+                                    silenceStartTime = null;
+                                    stopSpeechRecordingAndDispatch();
+                                }
+                            }
+
+                            // Safety timer: 7s maximum recording limit to prevent getting stuck
+                            if (nowMs - (speechStartTime || nowMs) > 7000) {
+                                silenceStartTime = null;
+                                stopSpeechRecordingAndDispatch();
+                            }
+                        }
+
+                        // STATE 3 & 4: SPEAKING or PROCESSING (Check for barge-in speech)
+                        else if (currentBotState === BOT_STATE.SPEAKING || currentBotState === BOT_STATE.PROCESSING) {
+                            const bargeInThreshold = Math.max(0.040, speechThreshold * 1.5);
+                            if (smoothedRms > bargeInThreshold) {
+                                consecutiveBargeInFrames++;
+                                if (consecutiveBargeInFrames >= 4) { // ~65ms of deliberate voice
+                                    consecutiveBargeInFrames = 0;
+                                    console.log("[VAD] User voice detected while bot active -> Instant Barge-In!");
+                                    interruptBot("vad_user_barge_in");
+                                    startSpeechRecording();
+                                }
+                            } else {
+                                consecutiveBargeInFrames = 0;
+                            }
+                        }
+                    }
+
+                    // ------------------------------------------
+                    // 3. REAL-TIME ORB MULTI-LAYER TRANSFORMS (GEMINI LIVE STYLE)
+                    // ------------------------------------------
+                    let targetScale = 1.0;
+                    let targetMorph = 0.0;
+                    let targetAuraScale = 1.0;
+                    let targetAuraOpacity = 0.35;
+                    let auraGradient = "";
+
+                    if (isUserAudioActive) {
+                        targetScale = 1.0 + Math.min(0.36, userVoiceEnergy * 0.35);
+                        targetMorph = Math.min(1.0, userVoiceEnergy * 1.5);
+                        targetAuraScale = 1.12 + userVoiceEnergy * 0.75;
+                        targetAuraOpacity = Math.min(0.88, 0.45 + userVoiceEnergy * 0.5);
+                        auraGradient = "radial-gradient(circle, #00E5FF 0%, #3B82F6 40%, transparent 70%)";
+                        if (orbBtn) orbBtn.style.boxShadow = `0 0 ${Math.round(45 + userVoiceEnergy * 65)}px rgba(0, 229, 255, 0.85), inset 0 0 38px #00E5FF`;
+                    } else if (isBotSpeaking && isBotAudioActive) {
+                        targetScale = 1.0 + Math.min(0.32, botBass * 0.28 + botMids * 0.16);
+                        targetMorph = Math.min(1.0, (botMids * 0.65 + botBass * 0.35) * 1.7);
+                        targetAuraScale = 1.15 + botBass * 0.8 + botMids * 0.3;
+                        targetAuraOpacity = Math.min(0.9, 0.5 + botVoiceEnergy * 0.5);
+                        // Gemini Live signature: Neon Magenta, Purple, and Electric Cyan fluid aura
+                        auraGradient = "radial-gradient(circle, #EC4899 0%, #8B5CF6 35%, #00E5FF 65%, transparent 75%)";
+                        if (orbBtn) orbBtn.style.boxShadow = `0 0 ${Math.round(50 + botBass * 70)}px rgba(236, 72, 153, 0.9), 0 0 30px rgba(0, 229, 255, 0.6), inset 0 0 42px #EC4899`;
+                    } else if (isBotThinking) {
+                        targetScale = 1.04 + Math.sin(now * 0.008) * 0.035;
+                        targetMorph = 0.25;
+                        targetAuraScale = 1.25 + Math.sin(now * 0.006) * 0.08;
+                        targetAuraOpacity = 0.7;
+                        auraGradient = "radial-gradient(circle, #7C3AED 0%, #6366F1 45%, transparent 70%)";
+                        if (orbBtn) orbBtn.style.boxShadow = "0 0 85px rgba(124, 58, 237, 0.9), inset 0 0 45px #00E5FF";
+                    } else {
+                        targetScale = 1.0 + Math.sin(now * 0.002) * 0.02; // Calm harmonic breathing
+                        targetMorph = 0.0;
+                        targetAuraScale = 1.0 + Math.sin(now * 0.002) * 0.08;
+                        targetAuraOpacity = 0.35;
+                        auraGradient = "radial-gradient(circle, var(--primary) 0%, var(--secondary) 40%, transparent 70%)";
+                        if (orbBtn) orbBtn.style.boxShadow = "0 0 50px var(--primary-glow), inset -20px -20px 40px rgba(10, 5, 30, 0.9), inset 20px 20px 40px rgba(255, 255, 255, 0.3), inset 0 0 30px var(--accent)";
+                    }
+
+                    // Smooth 60fps exponential lerp
+                    currentScale += (targetScale - currentScale) * 0.24;
+                    currentMorph += (targetMorph - currentMorph) * 0.22;
+                    auraScale += (targetAuraScale - auraScale) * 0.22;
+                    auraOpacity += (targetAuraOpacity - auraOpacity) * 0.22;
+
+                    // Organic Fluid Morphing
+                    if (orbBtn) {
+                        if (currentMorph > 0.02) {
+                            const t = now * 0.0035;
+                            const amp = currentMorph * 14;
+                            const r1 = Math.round(50 + Math.sin(t) * amp);
+                            const r2 = Math.round(50 + Math.cos(t * 1.1) * amp);
+                            const r3 = Math.round(50 + Math.sin(t * 0.9 + 2) * amp);
+                            const r4 = Math.round(50 + Math.cos(t * 1.2 + 1) * amp);
+                            const r5 = Math.round(50 + Math.sin(t * 1.3 + 3) * amp);
+                            const r6 = Math.round(50 + Math.cos(t * 0.8 + 2) * amp);
+                            const r7 = Math.round(50 + Math.sin(t * 1.2 + 4) * amp);
+                            const r8 = Math.round(50 + Math.cos(t * 1.4 + 1) * amp);
+                            orbBtn.style.borderRadius = `${r1}% ${r2}% ${r3}% ${r4}% / ${r5}% ${r6}% ${r7}% ${r8}%`;
+                        } else {
+                            orbBtn.style.borderRadius = "50%";
+                        }
+                        orbBtn.style.transform = `scale(${currentScale.toFixed(3)})`;
+                    }
+
+                    // Outer Aura Updates
+                    if (orbAura) {
+                        orbAura.style.transform = `scale(${auraScale.toFixed(3)})`;
+                        orbAura.style.opacity = auraOpacity.toFixed(3);
+                        orbAura.style.background = auraGradient;
+                        orbAura.style.filter = `blur(${Math.round(26 + (auraScale - 1) * 35)}px)`;
+                    }
+
+                    // ------------------------------------------
+                    // 4. REAL-TIME MULTI-BIN FREQUENCY SOUNDWAVE BARS
+                    // ------------------------------------------
+                    const activeFreqBuffer = isBotSpeaking ? botFreqBuffer : micFreqBuffer;
+                    const isAudioActive = (isBotSpeaking && isBotAudioActive) || isUserAudioActive;
+
+                    waveBars.forEach((bar, idx) => {
+                        let barHeight = 4;
+                        let barOpacity = 0.3;
+                        let barColor = "var(--accent)";
+
+                        if (isAudioActive && activeFreqBuffer) {
+                            const binIndex = Math.min(activeFreqBuffer.length - 1, Math.round(2 + idx * 2.8));
+                            const binVal = (activeFreqBuffer[binIndex] || 0) / 255;
+                            barHeight = Math.max(4, Math.round(binVal * 26));
+                            barOpacity = Math.max(0.3, Math.min(1.0, binVal * 1.35));
+
+                            if (isBotSpeaking) {
+                                barColor = idx < 7 ? "#EC4899" : "#00E5FF";
+                            } else {
+                                barColor = "#00E5FF";
+                            }
+                        } else {
+                            const idleWave = Math.sin((now / 320) + idx * 0.45) * 0.2 + 0.3;
+                            barHeight = Math.max(4, Math.round(idleWave * 8));
+                            barOpacity = 0.25;
+                            barColor = "var(--accent)";
+                        }
+
+                        bar.style.height = barHeight + "px";
+                        bar.style.opacity = barOpacity;
+                        bar.style.background = barColor;
+                    });
+                } catch (loopErr) {
+                    console.error("[updateLoop Error]", loopErr);
+                } finally {
+                    vadAnimationId = requestAnimationFrame(updateLoop);
+                }
+            }
+
+            vadAnimationId = requestAnimationFrame(updateLoop);
+        }
+
+        // ==========================================
+        // 🎙️ SPEECH RECORDING CONTROLLER (Req 1, 4, 11, 13)
+        // ==========================================
+        function startSpeechRecording() {
+            if (!microphoneStream) return;
+            if (currentBotState === BOT_STATE.RECORDING) return;
+
+            // Reset turn audio buffers cleanly (Req 13)
+            audioChunks = [];
+            speechStartTime = Date.now();
+            silenceStartTime = null;
+            consecutiveSilenceFrames = 0;
+
+            let mimeType = 'audio/webm';
+            if (!MediaRecorder.isTypeSupported('audio/webm')) {
+                mimeType = MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+            }
+
+            try {
+                mediaRecorder = mimeType ? new MediaRecorder(microphoneStream, { mimeType }) : new MediaRecorder(microphoneStream);
+            } catch (e) {
+                mediaRecorder = new MediaRecorder(microphoneStream);
+            }
+
+            mediaRecorder._cancelled = false;
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) {
+                    audioChunks.push(e.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                if (!mediaRecorder._cancelled && audioChunks.length > 0) {
+                    const capturedChunks = [...audioChunks];
+                    audioChunks = [];
+                    sendAudioToServer(capturedChunks, mediaRecorder.mimeType);
+                } else {
+                    audioChunks = [];
+                    console.warn("[MediaRecorder] No audio chunks captured or cancelled, returning to STANDBY.");
+                    setBotState(BOT_STATE.STANDBY);
+                }
+            };
+
+            try {
+                mediaRecorder.start(100); // 100ms standard slice for smooth container headers
+                setBotState(BOT_STATE.RECORDING);
+            } catch (err) {
+                console.error("Failed to start MediaRecorder:", err);
+                setBotState(BOT_STATE.STANDBY);
+            }
+        }
+
+        function stopSpeechRecordingAndDispatch() {
+            if (currentBotState !== BOT_STATE.RECORDING || !mediaRecorder) return;
+
+            const speechDuration = Date.now() - (speechStartTime || Date.now());
+            if (speechDuration < MIN_SPEECH_DURATION_MS) {
+                console.log(`[VAD] Speech too brief (${speechDuration}ms < ${MIN_SPEECH_DURATION_MS}ms), cancelling.`);
+                cancelSpeechRecording();
+                return;
+            }
+
+            console.log(`[VAD] End of speech detected (${speechDuration}ms). Auto-dispatching speech!`);
+            setBotState(BOT_STATE.PROCESSING);
+            try {
+                if (mediaRecorder.state !== "inactive") {
+                    mediaRecorder.stop();
+                }
+            } catch (e) {
+                console.error("Error stopping mediaRecorder:", e);
+                setBotState(BOT_STATE.STANDBY);
+            }
+        }
+
+        function cancelSpeechRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder._cancelled = true;
+                try { mediaRecorder.stop(); } catch (e) {}
+            }
+            audioChunks = [];
+            setBotState(BOT_STATE.STANDBY);
+        }
+
+        // ==========================================
+        // INTERACTIVE ORB & MIC CONTROLS
+        // ==========================================
+        async function handleUserTrigger() {
+            const ok = await ensureAudioStream();
+            if (!ok) return;
+
+            if (currentBotState === BOT_STATE.SPEAKING || currentBotState === BOT_STATE.PROCESSING) {
+                interruptBot("manual_click");
+                return;
+            }
+
+            if (currentBotState === BOT_STATE.RECORDING) {
+                stopSpeechRecordingAndDispatch();
+            } else {
+                startSpeechRecording();
+            }
+        }
+
+        orbBtn.addEventListener("click", handleUserTrigger);
+        micBtn.addEventListener("click", handleUserTrigger);
+
+        if (liveModeToggle) {
+            liveModeToggle.addEventListener("change", async () => {
+                if (liveModeToggle.checked) {
+                    const ok = await ensureAudioStream();
+                    if (ok) {
+                        setBotState(BOT_STATE.STANDBY);
+                    } else {
+                        liveModeToggle.checked = false;
+                    }
+                } else {
+                    if (currentBotState === BOT_STATE.RECORDING) {
+                        cancelSpeechRecording();
+                    }
+                    setBotState(BOT_STATE.STANDBY);
+                }
+            });
+        }
+
+        document.addEventListener("keydown", async (e) => {
+            if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+            if (e.code === "Space") {
+                e.preventDefault();
+                handleUserTrigger();
+            }
+        });
+
+        document.addEventListener("click", () => {
+            ensureAudioStream();
+        }, { once: true });
+
+        // Kick off immediate 60fps calm breathing loop & wavebars
+        startReactiveOrbLoop();
+
+        // ==========================================
+        // QUICK PROMPTS
+        // ==========================================
+        async function sendQuickPrompt(promptText) {
+            interruptBot("prompt_click");
+            appendBubble("user", "You", promptText);
+            setBotState(BOT_STATE.PROCESSING);
+            statePillText.innerText = "Processing prompt...";
+
+            try {
+                const res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: promptText, session_id: sessionId })
+                });
+
+                if (!res.ok) throw new Error("Failed to process text query");
+                const data = await res.json();
+
+                const toolsCalled = (data.tools_called || []).map(t => (typeof t === 'string' ? t : t.name)).filter(Boolean);
+                const toolsData = data.tools_called || [];
+                appendBubble("bot", "Voice Assistant", data.assistant_response, toolsCalled, toolsData);
+                document.getElementById("metric-llm").innerText = data.latency_ms + " ms";
+
+                // Generate and speak audio response
+                statePillText.innerText = "Generating voice response...";
+                const ttsRes = await fetch("/api/tts", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: data.assistant_response })
+                });
+
+                if (ttsRes.ok) {
+                    const audioBlob = await ttsRes.blob();
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioPlayer.src = audioUrl;
+                    setBotState(BOT_STATE.SPEAKING);
+
+                    audioPlayer.onended = () => {
+                        console.log("[AudioPlayer] Prompt response finished. Returning to STANDBY.");
+                        setPipelineStep('done');
+                        setBotState(BOT_STATE.STANDBY);
+                    };
+                    audioPlayer.onerror = (e) => {
+                        console.error("[AudioPlayer] Error during prompt playback:", e);
+                        setPipelineStep('done');
+                        setBotState(BOT_STATE.STANDBY);
+                    };
+                    await audioPlayer.play().catch(e => {
+                        console.log("[AudioPlayer] Prompt audio playback interrupted:", e);
+                        setBotState(BOT_STATE.STANDBY);
+                    });
+                } else {
+                    setBotState(BOT_STATE.STANDBY);
+                }
+                fetchLogs();
+            } catch (err) {
+                console.error("sendQuickPrompt error:", err);
+                setBotState(BOT_STATE.STANDBY);
+                statePillText.innerText = "Error: " + err.message;
+            }
+        }
+
+        // ==========================================
+        // 🚀 FULL-DUPLEX VOICE PIPELINE DISPATCH (Req 4-9, 12-14)
+        // ==========================================
+        async function sendAudioToServer(capturedChunks, mimeType) {
+            if (!capturedChunks || capturedChunks.length === 0) {
+                setBotState(BOT_STATE.STANDBY);
+                return;
+            }
+
+            const audioBlob = new Blob(capturedChunks, { type: mimeType || 'audio/webm' });
+            if (audioBlob.size < 350) {
+                console.log("[VoicePipeline] Audio blob too small, resetting to STANDBY:", audioBlob.size);
+                setBotState(BOT_STATE.STANDBY);
+                setPipelineStep(0);
+                return;
+            }
+
+            let extension = "webm";
+            if (mimeType && mimeType.includes("mp4")) extension = "mp4";
+            else if (mimeType && mimeType.includes("wav")) extension = "wav";
+            else if (mimeType && mimeType.includes("ogg")) extension = "ogg";
+
+            const formData = new FormData();
+            formData.append("audio", audioBlob, `user_speech.${extension}`);
+            formData.append("session_id", sessionId);
+
+            if (activeAbortController) activeAbortController.abort();
+            activeAbortController = new AbortController();
+
+            setBotState(BOT_STATE.PROCESSING);
+            statePillText.innerText = "⚡ Groq Whisper se voice transcribe ho rahi hai...";
+
+            try {
+                const response = await fetch("/api/voice-chat", {
+                    method: "POST",
+                    body: formData,
+                    signal: activeAbortController.signal,
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({ detail: "Server error" }));
+                    throw new Error(errData.detail || "Voice processing failed");
+                }
+
+                const transcript = decodeURIComponent(response.headers.get("X-Transcript") || "");
+                const assistantReply = decodeURIComponent(response.headers.get("X-Assistant-Response") || "");
+                const sttLat = response.headers.get("X-Latency-STT") || "0";
+                const llmLat = response.headers.get("X-Latency-LLM") || "0";
+                const ttsLat = response.headers.get("X-Latency-TTS") || "0";
+                const totalLat = response.headers.get("X-Latency-Total") || "0";
+                const ttftLat = response.headers.get("X-TTFT") || "0";
+                const chunksCount = response.headers.get("X-Chunks-Count") || "1";
+                const ttsProvider = response.headers.get("X-TTS-Provider") || "elevenlabs";
+                const rawTools = decodeURIComponent(response.headers.get("X-Tools-Called") || "");
+                const toolsCalled = (rawTools && rawTools !== "none") ? rawTools.split(",").filter(Boolean) : [];
+                
+                const rawToolsPayload = response.headers.get("X-Tools-Payload");
+                let toolsData = [];
+                if (rawToolsPayload) {
+                    try {
+                        toolsData = JSON.parse(decodeURIComponent(rawToolsPayload));
+                    } catch (e) {
+                        console.warn("Could not parse X-Tools-Payload:", e);
+                    }
+                }
+
+                const tokensUsed = response.headers.get("X-Tokens-Used") || "0";
+                const promptTokens = response.headers.get("X-Prompt-Tokens") || "0";
+                const compTokens = response.headers.get("X-Completion-Tokens") || "0";
+
+                document.getElementById("metric-stt").innerText = sttLat + " ms";
+                document.getElementById("metric-ttft").innerText = ttftLat + " ms";
+                document.getElementById("metric-llm").innerText = llmLat + " ms";
+                document.getElementById("metric-tts").innerText = ttsLat + " ms";
+                document.getElementById("metric-total").innerText = totalLat + " ms";
+                document.getElementById("metric-chunks").innerText = chunksCount;
+                if (document.getElementById("metric-tokens")) {
+                    document.getElementById("metric-tokens").innerText = `${tokensUsed} (${promptTokens} in / ${compTokens} out)`;
+                }
+
+                if (transcript) appendBubble("user", "You", transcript);
+                if (assistantReply) {
+                    const tag = ttsProvider === "elevenlabs" ? "ElevenLabs" : "Voice";
+                    appendBubble("bot", `Voice Assistant (${tag})`, assistantReply, toolsCalled, toolsData);
+                }
+
+                // Playback Voice Response (State: SPEAKING)
+                setBotState(BOT_STATE.SPEAKING);
+                statePillText.innerText = "🔊 Voice reply bol raha hu... (Interrupt karne ke liye bolein)";
+
+                const audioBlobResponse = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlobResponse);
+                audioPlayer.src = audioUrl;
+
+                // When audio ends: automatically return to STANDBY listening (Req 5, 7, 14)
+                audioPlayer.onended = () => {
+                    console.log("[AudioPlayer] Playback completed. Immediately resuming continuous listening!");
+                    setPipelineStep('done');
+                    setBotState(BOT_STATE.STANDBY);
+                };
+
+                audioPlayer.onerror = (e) => {
+                    console.error("[AudioPlayer] Error during audio playback:", e);
+                    setPipelineStep('done');
+                    setBotState(BOT_STATE.STANDBY);
+                };
+
+                await audioPlayer.play().catch(e => {
+                    console.log("[AudioPlayer] Playback interrupted or blocked:", e);
+                    setBotState(BOT_STATE.STANDBY);
+                });
+
+                fetchLogs();
+
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    console.log("[VoicePipeline] Previous request aborted by barge-in.");
+                    return;
+                }
+
+                console.error("[VoicePipeline] Error:", err);
+                const isShortOrSilence = err.message && (
+                    err.message.includes("No speech detected") || 
+                    err.message.includes("too short") ||
+                    err.message.includes("audio_too_short")
+                );
+
+                if (isShortOrSilence) {
+                    statePillText.innerText = "Aawaaz saaf sunai nahi di. Kripya dobara boliye...";
+                } else {
+                    statePillText.innerText = "Error: " + err.message;
+                    appendBubble("bot", "Error", "Sorry: " + err.message);
+                }
+
+                setPipelineStep(0);
+                setBotState(BOT_STATE.STANDBY);
+            }
+        }
+
+        const TOOL_LABELS = {
+            'check_symptoms_and_diseases': '🩺 Symptom Analyzer',
+            'analyze_disease_symptoms': '🩺 Symptom Analyzer',
+            'lookup_medicine_info': '💊 Medicine Guide',
+            'find_hospital_emergency': '🏥 Hospital Locator',
+            'find_hospitals_and_emergency': '🏥 Hospital Locator',
+            'find_clinic_specialist': '👨‍⚕️ Specialist Recommender',
+            'find_clinics_and_specialists': '👨‍⚕️ Specialist Recommender',
+            'get_first_aid_guide': '🩹 First Aid Guide',
+            'first_aid_and_emergency_guide': '🩹 First Aid Guide',
+            'live_web_search': '🌐 Live Web Search',
+            'live_medical_web_search': '🌐 Live Web Search'
+        };
+
+        function renderToolVisualCard(t) {
+            if (!t) return "";
+            const name = t.name || "";
+            const res = t.result || {};
+            const args = t.arguments || {};
+
+            // 1. 📋 Medical Rx Prescription Card
+            if (name === "lookup_medicine_info") {
+                const medName = res.medicine || args.medicine_name || "Medicine";
+                const brands = res.brands || [];
+                const uses = res.uses || "";
+                const dosage = res.dosage || "";
+                const precautions = res.precautions || "";
+                const guideline = res.guideline || "";
+
+                return `
+                    <div class="visual-card medical-rx-card">
+                        <div class="rx-header">
+                            <div class="rx-badge">℞ Rx Prescription Guide</div>
+                            <div class="rx-verified">✓ Verified Drug DB</div>
+                        </div>
+                        <div class="rx-body">
+                            <div class="rx-med-row">
+                                <span class="rx-med-name">${escapeHtml(medName)}</span>
+                                ${brands.length ? `<div class="rx-brands">${brands.map(b => `<span class="rx-brand-pill">${escapeHtml(b)}</span>`).join("")}</div>` : ''}
+                            </div>
+                            ${uses ? `
+                            <div class="rx-info-row">
+                                <span class="rx-label">🎯 Uses:</span>
+                                <span class="rx-val">${escapeHtml(uses)}</span>
+                            </div>` : ''}
+                            ${dosage ? `
+                            <div class="rx-dosage-box">
+                                <div class="rx-pill-badge">💊 Standard Dosage & Rule</div>
+                                <div class="rx-dosage-text">${escapeHtml(dosage)}</div>
+                            </div>` : ''}
+                            ${precautions ? `
+                            <div class="rx-warning-box">
+                                <span class="rx-warn-icon">⚠️</span>
+                                <div class="rx-warn-text"><strong>Precautions:</strong> ${escapeHtml(precautions)}</div>
+                            </div>` : ''}
+                            ${guideline ? `
+                            <div class="rx-info-row" style="color:var(--text-muted); font-style:italic;">
+                                ℹ️ ${escapeHtml(guideline)}
+                            </div>` : ''}
+                            <div class="rx-disclaimer">
+                                ℹ️ Doctor/Pharmacist ki salah ke bina dawai ka dose khud na badlein.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 2. 🚨 Emergency & Hospital Action Card
+            if (name === "find_hospital_emergency") {
+                const facility = res.facility || "24/7 Trauma / Casualty Hospital";
+                const guidance = res.guidance || "Emergency me turant call karein ya hospital jayein.";
+                const loc = args.location || "me";
+                const mapsQuery = encodeURIComponent(`hospitals near ${loc}`);
+
+                return `
+                    <div class="visual-card emergency-action-card">
+                        <div class="er-card-header">
+                            <div class="er-pulse-beacon"></div>
+                            <div class="er-title">🚨 Emergency & Hospital Action Card</div>
+                        </div>
+                        <div class="er-facility-box">
+                            <div class="er-facility-name">🏥 ${escapeHtml(facility)}</div>
+                            <div class="er-guidance">${escapeHtml(guidance)}</div>
+                        </div>
+                        <div class="er-actions-grid">
+                            <a href="tel:108" class="er-btn er-btn-ambulance">
+                                <span class="er-btn-icon">📞</span>
+                                <div class="er-btn-content">
+                                    <span class="er-btn-sub">Ambulance (Toll-Free)</span>
+                                    <span class="er-btn-main">Call 108 / 102</span>
+                                </div>
+                            </a>
+                            <a href="tel:112" class="er-btn er-btn-national">
+                                <span class="er-btn-icon">🚨</span>
+                                <div class="er-btn-content">
+                                    <span class="er-btn-sub">Emergency Helpline</span>
+                                    <span class="er-btn-main">Call 112</span>
+                                </div>
+                            </a>
+                            <a href="https://www.google.com/maps/search/${mapsQuery}" target="_blank" rel="noopener noreferrer" class="er-btn er-btn-maps">
+                                <span class="er-btn-icon">🗺️</span>
+                                <div class="er-btn-content">
+                                    <span class="er-btn-sub">1-Click Maps Navigation</span>
+                                    <span class="er-btn-main">Hospital Dekhein ↗</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 3. 🩺 Visual Symptom Triage & Severity Meter
+            if (name === "analyze_disease_symptoms") {
+                const conditions = res.conditions || [];
+                const redFlags = res.red_flags || [];
+                const homeCare = res.home_care || "";
+                const urgency = (res.urgency || "Moderate").toLowerCase();
+
+                let urgencyLevel = 2; // default moderate
+                if (urgency.includes("mild")) urgencyLevel = 1;
+                else if (urgency.includes("urgent") || urgency.includes("emergency") || urgency.includes("severe")) urgencyLevel = 3;
+
+                return `
+                    <div class="visual-card triage-severity-card">
+                        <div class="triage-card-header">
+                            <span class="triage-icon">🩺</span>
+                            <span class="triage-title">Visual Symptom Triage & Severity Meter</span>
+                        </div>
+                        <div class="triage-meter">
+                            <div class="meter-segment mild ${urgencyLevel === 1 ? 'active' : ''}">
+                                <span class="meter-dot"></span> 🟢 Mild
+                            </div>
+                            <div class="meter-segment moderate ${urgencyLevel === 2 ? 'active' : ''}">
+                                <span class="meter-dot"></span> 🟡 Moderate
+                            </div>
+                            <div class="meter-segment emergency ${urgencyLevel === 3 ? 'active' : ''}">
+                                <span class="meter-dot"></span> 🔴 Emergency
+                            </div>
+                        </div>
+                        ${conditions.length ? `
+                        <div class="triage-row">
+                            <span class="triage-label">Probable Causes:</span>
+                            <div class="triage-chips">
+                                ${conditions.map(c => `<span class="triage-chip">${escapeHtml(c)}</span>`).join("")}
+                            </div>
+                        </div>` : ''}
+                        ${redFlags.length ? `
+                        <div class="triage-red-flags">
+                            <div class="red-flags-title">⚠️ Red Flag Warning Signs (Seek ER if present):</div>
+                            <ul class="red-flags-list">
+                                ${redFlags.map(rf => `<li>${escapeHtml(rf)}</li>`).join("")}
+                            </ul>
+                        </div>` : ''}
+                        ${homeCare ? `
+                        <div class="triage-homecare">
+                            <span class="triage-label">💡 Home Care:</span>
+                            <span class="triage-homecare-text">${escapeHtml(homeCare)}</span>
+                        </div>` : ''}
+                    </div>
+                `;
+            }
+
+            // 4. 🩹 First Aid Checklist Card
+            if (name === "get_first_aid_guide") {
+                const scenario = res.scenario || args.emergency_scenario || "First Aid";
+                const steps = res.steps || res.immediate_steps || [];
+                const seekEr = res.seek_er || res.warning || "";
+
+                return `
+                    <div class="visual-card first-aid-card">
+                        <div class="fa-header">
+                            <span class="fa-icon">🩹</span>
+                            <span class="fa-title">First Aid Action Checklist: <strong>${escapeHtml(scenario)}</strong></span>
+                        </div>
+                        <div class="fa-steps-list">
+                            ${steps.map((st, i) => `
+                                <div class="fa-step-item">
+                                    <span class="fa-step-num">${i + 1}</span>
+                                    <span class="fa-step-text">${escapeHtml(st)}</span>
+                                </div>
+                            `).join("")}
+                        </div>
+                        ${seekEr ? `
+                        <div class="fa-er-callout">
+                            <span class="fa-er-icon">🚨</span>
+                            <span><strong>Kab Hospital Jayein:</strong> ${escapeHtml(seekEr)}</span>
+                        </div>` : ''}
+                    </div>
+                `;
+            }
+
+            // 5. 👨‍⚕️ Specialist Recommendation Card
+            if (name === "find_clinic_specialist") {
+                const spec = res.recommended_specialist || "Doctor";
+                const focus = res.clinical_focus || "";
+                const mapsLink = `https://www.google.com/maps/search/${encodeURIComponent(spec + ' near me')}`;
+
+                return `
+                    <div class="visual-card specialist-card">
+                        <div class="specialist-header">
+                            <span class="spec-icon">👨‍⚕️</span>
+                            <span class="spec-title">Specialist Recommendation</span>
+                        </div>
+                        <div class="spec-name">${escapeHtml(spec)}</div>
+                        ${focus ? `<div class="spec-focus">${escapeHtml(focus)}</div>` : ''}
+                        <div class="spec-action">
+                            <a href="${mapsLink}" target="_blank" rel="noopener noreferrer" class="spec-maps-link">
+                                Najdeeki Clinic / Doctor Dekhein ↗
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 6. 🌐 Live Web Search Intelligence Card
+            if (name === "live_web_search") {
+                const provider = res.provider || "Super API (Serper / DDG)";
+                const query = res.query || args.query || "";
+                const results = res.results || [];
+
+                return `
+                    <div class="visual-card web-search-card">
+                        <div class="ws-header">
+                            <div class="ws-title"><span class="ws-icon">🌐</span> Verified Web Intelligence</div>
+                            <span class="ws-badge">${escapeHtml(provider)}</span>
+                        </div>
+                        ${query ? `<div class="ws-query">Query: "${escapeHtml(query)}"</div>` : ''}
+                        <div class="ws-results">
+                            ${results.slice(0, 2).map(r => `
+                                <div class="ws-item">
+                                    <div class="ws-item-title">${escapeHtml(r.title || "")}</div>
+                                    <div class="ws-item-snippet">${escapeHtml(r.snippet || "")}</div>
+                                    ${r.link ? `<a href="${encodeURI(r.link)}" target="_blank" rel="noopener noreferrer" class="ws-item-link">${escapeHtml(r.link.substring(0, 50))}... ↗</a>` : ''}
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>
+                `;
+            }
+
+            return "";
+        }
+
+        function appendBubble(role, sender, text, tools = [], toolsData = []) {
+            const bubble = document.createElement("div");
+            bubble.className = `msg-bubble ${role}`;
+
+            let toolsHtml = "";
+            if (tools && tools.length > 0) {
+                toolsHtml = `<div class="tool-tags-wrap">` +
+                    tools.map(t => {
+                        const label = TOOL_LABELS[t] || `⚡ Tool: ${escapeHtml(t)}`;
+                        return `<span class="tool-tag">${label}</span>`;
+                    }).join("") +
+                `</div>`;
+            }
+
+            let cardsHtml = "";
+            if (toolsData && Array.isArray(toolsData) && toolsData.length > 0) {
+                cardsHtml = toolsData.map(t => renderToolVisualCard(t)).filter(Boolean).join("");
+            }
+
+            bubble.innerHTML = `
+                <div class="msg-sender"><span>${sender}</span></div>
+                ${toolsHtml}
+                <div class="msg-text">${escapeHtml(text)}</div>
+                ${cardsHtml}
+            `;
+            chatFeed.appendChild(bubble);
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+
+        function startNewChat() {
+            interruptBot("new_chat");
+            sessionId = generateSessionId();
+            const badge = document.getElementById("session-badge");
+            if (badge) badge.innerText = sessionId;
+
+            chatFeed.innerHTML = `
+                <div class="msg-bubble bot">
+                    <div class="msg-sender">Voice Assistant</div>
+                    Naya chat session shuru ho gaya (${sessionId})! Is chat ki alag log file logs/sessions/${sessionId}.log me maintain hogi. Boliye!
+                </div>
+            `;
+            fetchLogs();
+        }
+
+        async function fetchLogs() {
+            try {
+                const res = await fetch("/api/logs?limit=15");
+                if (!res.ok) return;
+                const data = await res.json();
+
+                if (data.stats) {
+                    document.getElementById("stat-total").innerText = data.stats.total_conversations;
+                    document.getElementById("stat-avg-lat").innerText = data.stats.avg_latency_ms + "ms";
+                    document.getElementById("stat-success").innerText = data.stats.success_rate + "%";
+                    document.getElementById("stat-tts-avg").innerText = data.stats.avg_tts_ms + "ms";
+                }
+
+                if (data.records && data.records.length > 0) {
+                    logsScroll.innerHTML = data.records.map(r => {
+                        const time = new Date(r.timestamp).toLocaleTimeString();
+                        return `
+                            <div class="log-entry">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span class="log-time">${time}</span>
+                                    <span style="color:var(--accent); font-size:0.68rem;">${r.metrics.total_latency_ms}ms</span>
+                                </div>
+                                <div class="log-query"><strong>User:</strong> ${escapeHtml(r.user_transcript)}</div>
+                                <div class="log-resp"><strong>Bot:</strong> ${escapeHtml(r.assistant_response)}</div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            } catch (e) {
+                console.error("Failed to fetch logs:", e);
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[m];
+            });
+        }
+
+        fetchLogs();
+    </script>
+</body>
+</html>

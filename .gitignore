@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+ENV/
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+
+# Logs & Storage
+logs/
+*.log
+*.jsonl
+
+# OS & Temp files
+.DS_Store
+*.wav
+*.webm
+*.mp3
+*.tmp
