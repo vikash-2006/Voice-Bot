@@ -7,12 +7,20 @@ from groq import Groq
 from app.services.logger import app_logger
 from app.services.chunker import optimize_long_user_query, SentenceStreamBuffer
 
-load_dotenv()
+load_dotenv(override=True)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
+def get_clean_key(env_name: str) -> str:
+    raw = os.getenv(env_name, "")
+    return raw.strip().strip('"').strip("'").strip()
+
+def get_groq_client():
+    key = get_clean_key("GROQ_API_KEY")
+    if not key:
+        return None
+    return Groq(api_key=key, timeout=15.0, max_retries=2)
+
+groq_client = get_groq_client()
 DEFAULT_MODEL = os.getenv("GROQ_LLM_MODEL", "qwen/qwen3.8-27b").strip()
-
-groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 import json
 from app.services.medical_tools import MEDICAL_TOOLS_DEFINITIONS, execute_tool
@@ -174,8 +182,9 @@ def generate_response(
             "chunks_count": int
         }
     """
-    if not groq_client:
-        raise RuntimeError("GROQ_API_KEY is missing in .env")
+    client = get_groq_client() or groq_client
+    if not client:
+        raise RuntimeError("GROQ_API_KEY is missing in environment variables.")
 
     cleaned_text = user_text.strip()[:250]
     if not cleaned_text:
@@ -260,7 +269,7 @@ def generate_response(
                 call_kwargs["tools"] = MEDICAL_TOOLS_DEFINITIONS
                 call_kwargs["tool_choice"] = "auto"
 
-            initial_res = groq_client.chat.completions.create(**call_kwargs)
+            initial_res = client.chat.completions.create(**call_kwargs)
 
             msg = initial_res.choices[0].message
             tools_called = []
@@ -291,7 +300,7 @@ def generate_response(
                     })
 
                 # Follow-up completion with tool clinical facts (stream=False for exact token usage)
-                followup_res = groq_client.chat.completions.create(
+                followup_res = client.chat.completions.create(
                     model=candidate_model,
                     messages=messages,
                     temperature=0.2,

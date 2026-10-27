@@ -6,13 +6,19 @@ from dotenv import load_dotenv
 from groq import Groq
 from app.services.logger import app_logger
 
-load_dotenv()
+load_dotenv(override=True)
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "").strip()
-STT_PROVIDER = os.getenv("STT_PROVIDER", "groq").strip().lower()
+def get_clean_key(env_name: str) -> str:
+    raw = os.getenv(env_name, "")
+    return raw.strip().strip('"').strip("'").strip()
 
-groq_client = Groq(api_key=GROQ_API_KEY, timeout=12.0, max_retries=2) if GROQ_API_KEY else None
+def get_groq_client():
+    key = get_clean_key("GROQ_API_KEY")
+    if not key:
+        return None
+    return Groq(api_key=key, timeout=15.0, max_retries=2)
+
+groq_client = get_groq_client()
 
 
 def transcribe_audio_file(
@@ -56,8 +62,9 @@ def transcribe_audio_file(
 
 
 def _transcribe_groq(audio_bytes: bytes, filename: str, start_time: float) -> Dict[str, Any]:
-    if not groq_client:
-        raise RuntimeError("GROQ_API_KEY is missing in .env")
+    client = get_groq_client() or groq_client
+    if not client:
+        raise RuntimeError("GROQ_API_KEY is missing in environment variables.")
 
     # In Groq API, file must be a tuple: (filename, bytes_data)
     file_payload = (filename or "recording.wav", audio_bytes)
@@ -66,7 +73,7 @@ def _transcribe_groq(audio_bytes: bytes, filename: str, start_time: float) -> Di
     stt_model = os.getenv("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo").strip()
     
     try:
-        response = groq_client.audio.transcriptions.create(
+        response = client.audio.transcriptions.create(
             file=file_payload,
             model=stt_model,
             response_format="json",

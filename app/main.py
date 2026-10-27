@@ -3,6 +3,9 @@ import json
 import urllib.parse
 import base64
 from typing import Optional, Dict, Any
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
 from fastapi.responses import Response, FileResponse, JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -78,14 +81,26 @@ def home():
 @app.get("/health", summary="Health check")
 @app.get("/api/health", summary="API Health check")
 def health():
-    groq_ready = bool(os.getenv("GROQ_API_KEY", "").strip())
-    eleven_ready = bool(os.getenv("ELEVENLABS_API_KEY", "").strip())
+    raw_groq = os.getenv("GROQ_API_KEY", "")
+    clean_groq = raw_groq.strip().strip('"').strip("'").strip()
+    raw_eleven = os.getenv("ELEVENLABS_API_KEY", "")
+    clean_eleven = raw_eleven.strip().strip('"').strip("'").strip()
+
     return {
-        "status": "healthy" if (groq_ready and eleven_ready) else "degraded",
-        "providers": {
-            "groq_configured": groq_ready,
-            "elevenlabs_configured": eleven_ready,
+        "status": "healthy" if clean_groq else "degraded",
+        "groq": {
+            "configured": bool(clean_groq),
+            "starts_with": clean_groq[:7] if clean_groq else "",
+            "ends_with": clean_groq[-4:] if len(clean_groq) > 10 else "",
+            "length": len(clean_groq),
+            "had_quotes": (raw_groq.startswith('"') or raw_groq.startswith("'")),
         },
+        "elevenlabs": {
+            "configured": bool(clean_eleven),
+            "starts_with": clean_eleven[:7] if clean_eleven else "",
+            "length": len(clean_eleven),
+        },
+        "server_environment": "vercel" if os.environ.get("VERCEL") else "local",
     }
 
 
